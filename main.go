@@ -4,6 +4,7 @@ package main
 import (
 	"fmt"
 	"math/rand"
+	// "sort"
 	// "reflect"
 )
 
@@ -189,66 +190,76 @@ func (ply *Player) ClearCards() {
 	ply.cards = ply.cards[:0]
 }
 
-func (ply *Player) grading(p int) { //level: AAAA/10 AAA/5  AA/3 AB/2 AC/1 A/0
-	w := int(p / 10)
-	lst := ply.tile[w]
-	x := Sort(lst)
-	x >>= 4
-	fmt.Println(lst, x)
-	dict := make(map[int]int)
-	for c := 1; x > 0; c++ {
-		i := x & 15
-		j := x & 273
+func (ply *Player) grading() { //level: AAAA/10 AAA/5  AA/3 AB/2 AC/1 A/0
+	l, n := 0, 0
+	for o := 0; o < 3; o++ {
+		l += len(ply.tile[o])
+	}
+	a := make(MahjangSlice, l)
+	for w := 0; w < 3; w++ {
+		lst := ply.tile[w]
+		x := Sort(lst)
 		x >>= 4
-		if i > 0 {
-			k := 0
-			if j == 273 {
-				k = 3
-				if v, ok := dict[c+2]; ok {
-					dict[c+2] = v + 1
-				} else {
-					dict[c+2] = 1
+		dict := make(map[int]int)
+		for c := 1; x > 0; c++ {
+			i := x & 15
+			j := x & 273
+			x >>= 4
+			if i > 0 {
+				k := 0
+				if j == 273 {
+					k = 3
+					if v, ok := dict[c+2]; ok {
+						dict[c+2] = v + 1
+					} else {
+						dict[c+2] = 1
+					}
+					if v, ok := dict[c+1]; ok {
+						dict[c+1] = v + 2
+					} else {
+						dict[c+1] = 2
+					}
+				} else if j == 257 {
+					k = 1
+					if v, ok := dict[c+2]; ok {
+						dict[c+2] = v + 1
+					} else {
+						dict[c+2] = 1
+					}
+				} else if j == 17 {
+					k = 2
+					if v, ok := dict[c+1]; ok {
+						dict[c+1] = v + 2
+					} else {
+						dict[c+1] = 2
+					}
+				} else if j == 1 {
+					k = 0
 				}
-				if v, ok := dict[c+1]; ok {
-					dict[c+1] = v + 2
-				} else {
-					dict[c+1] = 2
-				}
-			} else if j == 257 {
-				k = 1
-				if v, ok := dict[c+2]; ok {
-					dict[c+2] = v + 1
-				} else {
-					dict[c+2] = 1
-				}
-			} else if j == 17 {
-				k = 2
-				if v, ok := dict[c+1]; ok {
-					dict[c+1] = v + 2
-				} else {
-					dict[c+1] = 2
-				}
-			} else if j == 1 {
-				k = 0
-			}
 
-			// i == 1
-			if i == 3 {
-				k += 3
-			} else if i == 7 {
-				k += 5
-			} else if i == 15 {
-				k += 10
-			}
+				// i == 1
+				if i == 3 {
+					k += 3
+				} else if i == 7 {
+					k += 5
+				} else if i == 15 {
+					k += 10
+				}
 
-			if v, ok := dict[c]; ok {
-				dict[c] = v + k
-			} else {
-				dict[c] = k
+				if v, ok := dict[c]; ok {
+					dict[c] = v + k
+				} else {
+					dict[c] = k
+				}
 			}
 		}
+		for k, v := range dict {
+			a[n] = &MahjangItem{w, k, v}
+			n++
+		}
 	}
-	fmt.Println(dict)
+	//sort.Sort(a)
+	fmt.Println(a)
 }
 
 func (ply *Player) Eat(p int) {
@@ -418,10 +429,10 @@ func main() {
 		p = maj.get_pai()
 		hz = maj.GetNum()
 		j = i % 4
+		fmt.Println(p)
 		// paylers[j].Eat(p)
 		// fmt.Println(hz, p, j)
-		paylers[j].grading(p)
-
+		paylers[j].grading()
 		// if paylers[j].ting {
 		// 	paylers[j].checkhand()
 		// } else {
@@ -607,7 +618,7 @@ type MahjangItem struct {
 }
 
 func (self MahjangItem) String() string {
-	return fmt.Sprintf("<Mahjang(%d, %d)>", self.Tile, self.Card)
+	return fmt.Sprintf("<Mahjang(%d-%d,%d)>", self.Tile, self.Card, self.Level)
 }
 
 type MahjangSlice []*MahjangItem

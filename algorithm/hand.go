@@ -1,50 +1,11 @@
-package main
+//hand.go
+package hand
 
 import (
 	"fmt"
-	// "strconv"
 )
 
-func bin(v uint64) {
-	var s [14]uint64
-	for i, j := v, 13; i > 0; j-- {
-		s[j] = i & 1
-		i = i >> 1
-	}
-	fmt.Println(s)
-
-}
-
-func sorta(arr []uint64) uint64 {
-	var y uint64 = 0
-	for _, i := range arr {
-		j := y >> (i * 4) & 15
-		k := j<<1 + 1
-		y = y | (k << (i * 4))
-	}
-	return y
-}
-
-func sortb(v uint64) uint64 {
-	var x uint64
-	for x = 0; v > 0; {
-		x = ((x << 4) + (v & 15))
-		v >>= 4
-	}
-	return x
-}
-
-func showa(y uint64) {
-	for j := 0; y > 0; j++ {
-		if y&1 == 1 {
-			fmt.Printf("%d", int(j/4))
-		}
-		y >>= 1
-	}
-	fmt.Println(" ")
-}
-
-func hand(x uint64, n int) bool {
+func Hand(x uint64, n int) bool {
 	arr := make([]int, 0, 14)
 	jng := make([]int, 0, 7)
 	if n%3 == 1 {
@@ -168,44 +129,4 @@ func hand(x uint64, n int) bool {
 	fmt.Println(arr)
 	fmt.Println(jng)
 	return true
-}
-
-func main() {
-	// var arr = []uint64{6, 5, 5, 6, 7, 7, 5, 5}
-	// x := sorta(arr)
-	// fmt.Println(strconv.FormatUint(x, 2))
-	// showa(x)
-	// x >>= 4
-	// handu(x, len(arr))
-
-	// fmt.Println("---------------------------------")
-
-	// var lst = []uint64{3, 5, 6, 6, 5, 9, 7, 7, 4, 8, 4, 2, 2, 2}
-	// y := sorta(lst)
-	// showa(y)
-	// z := sortb(y)
-
-	// y >>= 4
-	// fmt.Println(strconv.FormatUint(y, 2))
-	// fmt.Println(strconv.FormatUint(z, 2))
-	// // handu(y, len(lst))
-	// hu(y, len(lst))
-	// hu(z, len(lst))
-
-	// var lst = []uint64{1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 5, 5}
-	// var lst = []uint64{2, 2, 2, 2, 3, 3, 4, 4, 5, 6, 7}
-	// var lst = []uint64{2, 2, 2, 2, 3, 4, 5, 6, 7}
-	// var lst = []uint64{2, 2, 2, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 9}
-	var lst = []uint64{2, 2, 2, 3, 4, 5, 6, 7, 7, 8, 9}
-	// var lst = []uint64{2, 2, 2, 3, 4, 7, 8, 9}
-	// var lst = []uint64{2, 2, 2, 3, 4, 5, 8, 6} //assert 'abc false'
-	// var lst = []uint64{1, 2, 2, 2, 3, 4, 5, 6}
-	// var lst = []uint64{2, 2, 3, 3, 4, 4, 5, 5}
-
-	y := sorta(lst)
-	showa(y)
-	// z := sortb(y)
-	y >>= 4
-	logic := hand(y, len(lst))
-	fmt.Println(logic)
 }

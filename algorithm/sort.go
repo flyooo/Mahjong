@@ -1,7 +1,7 @@
 //sort.go
-package sort
+package mjsort
 
-func Sort(arr []uint64) {
+func MjSort(arr []uint64) {
 	var y uint64 = 0
 	for _, i := range arr {
 		j := y >> (i * 4) & 15
